@@ -48,7 +48,7 @@ describe "OmniAuth::Strategies::ShibbolethPassive" do
       it "should set the IdP called back time to now" do
         strategy.set_idp_called_back_time
         expect(strategy.idp_called_back_time).to be_a(Time)
-        expect(strategy.idp_called_back_time).to be_within(0.01.second).of(Time.now)
+        expect(strategy.idp_called_back_time).to be_within(0.1.second).of(Time.now)
       end
     end
   end
