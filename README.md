@@ -15,6 +15,6 @@ provide support for Shibboleth configured in ["passive mode"](https://wiki.shibb
 Based on the configuration of the `:id_callback_frequency`, in cases where there is no SP Shibboleth session the strategy will redirect
 to the IdP to try to establish a SP session.  Valid values for `:id_callback_frequency` are `:every_request`, `first_request` or a
 [time specification](http://edgeguides.rubyonrails.org/active_support_core_extensions.html#time) `lambda`
-(or anything that responds to `:call` and returns an object that is comparable to and instance of `Time`).
+(or anything that responds to `:call` and returns an object that is comparable to an instance of `Time`).
 The default is `:every_request`.
 
