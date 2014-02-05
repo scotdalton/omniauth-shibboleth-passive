@@ -112,4 +112,10 @@ describe "OmniAuth::Strategies::ShibbolethPassive" do
       end
     end
   end
+  describe '#silent_fail' do
+    it "should not raise an error" do
+      expect { strategy.silent_fail }.not_to raise_error
+  end
+    
+  end
 end
