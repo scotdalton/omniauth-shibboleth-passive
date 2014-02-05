@@ -3,6 +3,7 @@ require 'omniauth-shibboleth'
 module OmniAuth
   module Strategies
     class ShibbolethPassive < Shibboleth
+      option :name, :shibboleth_passive
 
       # Override callback phase to not fail
       # where there isn't a Shibboleth session

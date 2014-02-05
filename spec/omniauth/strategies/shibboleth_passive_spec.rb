@@ -20,6 +20,10 @@ describe "OmniAuth::Strategies::ShibbolethPassive" do
       allow(s).to receive(:fail!).and_return(true)
     end
   end
+  describe '#name' do
+    subject { strategy.name }
+    it { should eq(:shibboleth_passive)}
+  end
   describe '#shibboleth_idp_called_param' do
     subject { strategy.shibboleth_idp_called_param }
     context "when Shibboleth hasn't been called" do
@@ -66,7 +70,7 @@ describe "OmniAuth::Strategies::ShibbolethPassive" do
   end
   describe '#shibboleth_idp_url' do
     subject { strategy.shibboleth_idp_url }
-    it { should eq("/Shibboleth.sso/Login?isPassive=true&target=/auth/shibbolethpassive/callback") }
+    it { should eq("/Shibboleth.sso/Login?isPassive=true&target=/auth/shibboleth_passive/callback") }
   end
   describe '#shibboleth_idp_called?' do
     subject { strategy.shibboleth_idp_called? }
