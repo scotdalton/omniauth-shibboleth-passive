@@ -3,51 +3,46 @@ require 'omniauth-shibboleth'
 module OmniAuth
   module Strategies
     class ShibbolethPassive < Shibboleth
-      # Set defaults for options
-      option :idp_callback_frequency, :every_request
 
-      def valid_config?
-        case idp_callback_frequency
-        when :every_request, :first_request, Proc
-          true
+      # Override callback phase to not fail
+      # where there isn't a Shibboleth session
+      def callback_phase
+        if shibboleth_session? || shibboleth_idp_called?
+          unset_shibboleth_idp_called_param
+          (shibboleth_session?) ? super : silent_fail
         else
-          false
+          set_shibboleth_idp_called_param
+          redirect(shibboleth_idp_url)
         end
       end
 
-      def idp_callback?
-        raise ArgumentError.new("Invalid configuration") unless valid_config?
-        case idp_callback_frequency
-        when :every_request, :first_request
-          idp_called_back != true
-        when Proc
-          expiration = idp_callback_frequency.call
-          (!idp_called_back_time.is_a?(Time) || idp_called_back_time < expiration)
-        end
+      def silent_fail
+        OmniAuth.config.on_failure.call(env)
       end
 
-      def set_idp_called_back
-        session[:omniauth][:shibboleth][:idp_called_back] = true
+      def shibboleth_idp_url
+        "/Shibboleth.sso/Login?isPassive=true&target=#{URI.escape(callback_url)}"
       end
 
-      def unset_idp_called_back
-        session[:omniauth][:shibboleth][:idp_called_back] = nil
+      def shibboleth_session?
+        (request_param(options.shib_session_id_field.to_s) || 
+          request_param(options.shib_application_id_field.to_s))
       end
 
-      def set_idp_called_back_time
-        session[:omniauth][:shibboleth][:idp_called_back_time] = Time.now
+      def shibboleth_idp_called?
+        shibboleth_idp_called_param == true
       end
 
-      def idp_called_back
-        session[:omniauth][:shibboleth][:idp_called_back]
+      def set_shibboleth_idp_called_param
+        session[:shibboleth_idp_called] = true
       end
 
-      def idp_called_back_time
-        session[:omniauth][:shibboleth][:idp_called_back_time]
+      def unset_shibboleth_idp_called_param
+        session[:shibboleth_idp_called] = nil
       end
 
-      def idp_callback_frequency
-        @idp_callback_frequency ||= options.idp_callback_frequency
+      def shibboleth_idp_called_param
+        session[:shibboleth_idp_called]
       end
     end
   end
